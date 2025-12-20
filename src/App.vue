@@ -1,5 +1,7 @@
 <template>
   <div class="app-shell">
+    <div class="aurora"></div>
+    <SnowCanvas />
     <!-- 로그인 상태 + 현재 라우트가 레이아웃 허용일 때만 노출 -->
     <Header v-if="showLayout" />
 
@@ -23,6 +25,7 @@ import { useRoute } from 'vue-router';
 import Header from '@/components/Header.vue';
 import Navi from '@/components/Navi.vue';
 import { useUserStore } from '@/stores/user';
+import SnowCanvas from './components/SnowCanvas.vue';
 
 const route = useRoute();
 const userStore = useUserStore();
@@ -72,11 +75,12 @@ const showLayout = computed(() => {
 html,
 body {
   height: 100%;
+  overscroll-behavior: none;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: radial-gradient(circle at bottom, #0a0a15, #000);
   color: var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple SD Gothic Neo",
     "Noto Sans KR", "Malgun Gothic", sans-serif;
@@ -261,6 +265,80 @@ button:disabled {
   text-decoration: none;
 
   transition: transform 0.04s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.snow-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ===== AURORA BACKGROUND ===== */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: #02030a;
+  overflow: hidden;
+}
+
+/* 오로라 레이어들 */
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  width: 160%;
+  height: 160%;
+  top: -30%;
+  left: -30%;
+  filter: blur(80px);
+  opacity: 0.6;
+  mix-blend-mode: screen;
+}
+
+/* 초록/청록 오로라 */
+.aurora::before {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(80, 255, 200, 0.45),
+    rgba(0, 180, 255, 0.25),
+    transparent 60%
+  );
+  animation: auroraMove1 40s ease-in-out infinite;
+}
+
+/* 보라/핑크 오로라 */
+.aurora::after {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(180, 100, 255, 0.45),
+    rgba(255, 80, 200, 0.25),
+    transparent 60%
+  );
+  animation: auroraMove2 55s ease-in-out infinite;
+}
+
+/* 어두운 비네팅 */
+.aurora::marker {
+  content: "";
+}
+
+@keyframes auroraMove1 {
+  0%   { transform: translate(-10%, -10%) rotate(0deg); }
+  50%  { transform: translate(10%, 5%) rotate(20deg); }
+  100% { transform: translate(-10%, -10%) rotate(0deg); }
+}
+
+@keyframes auroraMove2 {
+  0%   { transform: translate(10%, 10%) rotate(0deg); }
+  50%  { transform: translate(-10%, -5%) rotate(-25deg); }
+  100% { transform: translate(10%, 10%) rotate(0deg); }
 }
 
 /* Responsive */
